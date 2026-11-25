@@ -1,0 +1,14 @@
+{
+  "BAC": {
+    "nickname": "BAC",
+    "wins": 1,
+    "losses": 0,
+    "draws": 0
+  },
+  "ZAX": {
+    "nickname": "ZAX",
+    "wins": 0,
+    "losses": 1,
+    "draws": 0
+  }
+}

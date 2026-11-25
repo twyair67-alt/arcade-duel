@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <title>ARCADE DUEL</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <section id="home-screen" class="screen home-screen" aria-label="Menu principale">
+      <h1 class="game-title" aria-label="Arcade Duel">ARCADE<br><span>DUEL</span></h1>
+      <nav class="main-menu" aria-label="Menu">
+        <button id="play-online" class="menu-button">GIOCA</button>
+        <button id="play-cpu" class="menu-button">VS CPU</button>
+        <button id="show-global" class="menu-button">CLASSIFICA GLOBALE</button>
+        <button id="show-local" class="menu-button">CLASSIFICA LOCALE</button>
+      </nav>
+      <section class="nickname-picker" aria-label="Selezione nickname">
+        <p>NICKNAME</p>
+        <div id="nickname-slots" class="nickname-slots"></div>
+        <span class="picker-hint">▲ / ▼ · FRECCE O TOCCO</span>
+      </section>
+    </section>
+
+    <section id="game-screen" class="screen game-screen hidden" aria-label="Partita">
+      <header class="game-header">
+        <button id="back-home" class="small-button" aria-label="Torna al menu">← MENU</button>
+        <div id="round-label" class="round-label">ROUND 1 / 3</div>
+        <div id="game-status" class="game-status">IN ATTESA</div>
+      </header>
+      <div class="arena-wrap">
+        <canvas id="arena" class="no-touch-gesture" aria-label="Arena di gioco"></canvas>
+        <div id="hud" class="hud">
+          <div class="hud-player hud-left"><span id="left-name">AAA</span><span id="left-ammo">● ● ●</span><span id="left-dodge">SCHIVA: PRONTA</span></div>
+          <div id="timer" class="timer">75</div>
+          <div class="hud-player hud-right"><span id="right-name">CPU</span><span id="right-ammo">● ● ●</span><span id="right-dodge">SCHIVA: PRONTA</span></div>
+        </div>
+        <div id="game-overlay" class="game-overlay hidden">
+          <p id="overlay-message"></p>
+          <button id="overlay-action" class="menu-button">CONTINUA</button>
+        </div>
+      </div>
+      <div class="touch-controls no-touch-gesture" aria-label="Controlli touch">
+        <button id="fire-control" class="control-button fire-control">SPARA<br><small>MIRA E RILASCIA</small></button>
+        <button id="dodge-control" class="control-button dodge-control">SCHIVA<br><small id="touch-dodge-status">PRONTA</small></button>
+      </div>
+      <p class="controls-hint">MIRA: mouse · SPARA: clic / SPAZIO · SCHIVA: clic destro / SHIFT</p>
+    </section>
+
+    <section id="leaderboard-screen" class="screen leaderboard-screen hidden" aria-label="Classifica">
+      <button id="leaderboard-back" class="small-button">← MENU</button>
+      <h2 id="leaderboard-title">CLASSIFICA</h2>
+      <div id="leaderboard-content"></div>
+    </section>
+  </main>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
