@@ -1,0 +1,17 @@
+{
+  "name": "arcade-duel-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lightweight WebSocket matchmaking and authoritative game server for ARCADE DUEL",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

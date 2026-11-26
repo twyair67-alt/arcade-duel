@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ARCADE DUEL</string>
+    <string name="title_activity_main">ARCADE DUEL</string>
+    <string name="package_name">com.twyair67.arcadeduel</string>
+    <string name="custom_url_scheme">com.twyair67.arcadeduel</string>
+</resources>

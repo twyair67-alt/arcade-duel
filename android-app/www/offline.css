@@ -1,0 +1,44 @@
+:root {
+  color-scheme: dark;
+  font-family: "Courier New", monospace;
+  background: #000;
+  color: #f5f7ff;
+}
+
+* { box-sizing: border-box; }
+html, body { width: 100%; min-height: 100%; margin: 0; background: #000; }
+body {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  place-items: center;
+  padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
+  text-align: center;
+}
+main { width: min(440px, 100%); }
+h1 { margin: 0 0 28px; font-size: clamp(1.7rem, 8vw, 2.2rem); letter-spacing: .12em; text-shadow: 3px 0 #31f5ff, -3px 0 #ff3fa4; }
+h1 span { color: #31f5ff; }
+.spinner {
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 22px;
+  border: 3px solid #29353d;
+  border-top-color: #31f5ff;
+  border-right-color: #ff3fa4;
+  border-radius: 50%;
+  animation: spin .9s linear infinite;
+}
+#status { min-height: 72px; margin: 0 0 18px; color: #c4cbd2; font-size: .9rem; line-height: 1.6; }
+button {
+  min-width: 190px;
+  min-height: 48px;
+  border: 1px solid #31f5ff;
+  background: #05080b;
+  color: #f5f7ff;
+  font: inherit;
+  letter-spacing: .1em;
+  touch-action: manipulation;
+}
+button:active { background: #31f5ff; color: #000; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
