@@ -297,9 +297,10 @@ function createPrivateLobby(socket, kind) {
   send(socket, { type: "private_lobby", lobby: lobbyView(lobby) });
 }
 
-function joinPrivateLobby(socket, code) {
+function joinPrivateLobby(socket, code, kind) {
   const lobby = privateLobbies.get(String(code || "").toUpperCase());
-  if (!lobby || lobby.started) return send(socket, { type: "error", message: "Codice invito non valido o lobby già avviata." });
+  const invalidMessage = kind === "tournament" ? "Codice torneo non valido." : "Codice invito non valido o lobby già avviata.";
+  if (!lobby || lobby.kind !== kind || lobby.started) return send(socket, { type: "error", message: invalidMessage });
   if (lobby.players.some(player => player.profile.id === socket.profileId && !player.disconnected)) {
     return send(socket, { type: "error", message: "Sei già nella lobby." });
   }
@@ -321,9 +322,7 @@ function createFriendlyRoom(socket) { createPrivateLobby(socket, "friendly"); }
 function createTournament(socket) { createPrivateLobby(socket, "tournament"); }
 
 function joinTournament(socket, code) {
-  const lobby = privateLobbies.get(String(code || "").toUpperCase());
-  if (!lobby || lobby.kind !== "tournament") return send(socket, { type: "error", message: "Codice torneo non valido." });
-  joinPrivateLobby(socket, code);
+  joinPrivateLobby(socket, code, "tournament");
 }
 
 function startTournament(socket, code) {
@@ -941,7 +940,8 @@ wss.on("connection", socket => {
       createPrivateLobby(socket, message.kind);
     } else if (message.type === "join_lobby" && !socket.roomId && !socket.lobbyId) {
       if (message.kind === "tournament") joinTournament(socket, message.code);
-      else joinPrivateLobby(socket, message.code);
+      else if (message.kind === "friendly") joinPrivateLobby(socket, message.code, "friendly");
+      else send(socket, { type: "error", message: "Tipo lobby non valido." });
     } else if (message.type === "start_tournament" && !socket.roomId) {
       startTournament(socket, message.code);
     } else if (message.type === "action") handleAction(socket, message);

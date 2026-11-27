@@ -157,7 +157,7 @@ function getHttpBase() {
   const fallback = location.protocol === "file:" || !location.host || localHost
     ? `http://${location.hostname || "localhost"}:8080`
     : location.origin;
-  return (window.ARCADE_SERVER_HTTP || fallback).replace(/\/$/, "");
+  return (window.ARCADE_SERVER_HTTP || window.arcadeDesktop?.serverHttpUrl || fallback).replace(/\/$/, "");
 }
 
 function escapeHtml(value) {
