@@ -1,19 +1,54 @@
 "use strict";
 
-const { app, BrowserWindow, dialog, ipcMain } = require("electron");
+const { app, BrowserWindow, dialog, ipcMain, net, protocol } = require("electron");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 
-const GAME_URL = "https://arcade-duel.onrender.com/";
+const GAME_SCHEME = "arcade";
+const GAME_HOST = "game";
 const RETRY_DELAYS_MS = [2000, 4000, 8000, 15000, 30000];
 const LOAD_TIMEOUT_MS = 120000;
+
+protocol.registerSchemesAsPrivileged([{
+  scheme: GAME_SCHEME,
+  privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true }
+}]);
 
 let gameWindow = null;
 let loadingWindow = null;
 let retryTimer = null;
 let retryAttempt = 0;
-let isLoadingRemote = false;
+let isLoadingGame = false;
 let gameLoaded = false;
 let isQuitting = false;
+
+function gameAssetsPath() {
+  return app.isPackaged
+    ? path.join(process.resourcesPath, "game")
+    : path.resolve(__dirname, "..");
+}
+
+function registerGameProtocol() {
+  const root = gameAssetsPath();
+  protocol.handle(GAME_SCHEME, request => {
+    const url = new URL(request.url);
+    if (url.hostname !== GAME_HOST) return new Response("Not found", { status: 404 });
+
+    let relativePath;
+    try {
+      relativePath = decodeURIComponent(url.pathname).replace(/^\/+/, "") || "index.html";
+    } catch (error) {
+      console.error("Invalid local game asset URL:", error);
+      return new Response("Bad request", { status: 400 });
+    }
+
+    const filePath = path.resolve(root, relativePath);
+    if (filePath !== root && !filePath.startsWith(`${root}${path.sep}`)) {
+      return new Response("Not found", { status: 404 });
+    }
+    return net.fetch(pathToFileURL(filePath).href);
+  });
+}
 
 function sendLoadingStatus(phase, message) {
   if (!loadingWindow || loadingWindow.isDestroyed()) return;
@@ -25,27 +60,24 @@ function scheduleRetry(errorMessage) {
   const seconds = Math.round(delay / 1000);
   sendLoadingStatus(
     "retry",
-    `${errorMessage}\n\nNuovo tentativo automatico tra ${seconds} secondi. Render potrebbe essere in fase di riavvio.`
+    `${errorMessage}\n\nNuovo tentativo automatico tra ${seconds} secondi.`
   );
   retryTimer = setTimeout(() => {
     retryTimer = null;
-    loadRemoteGame();
+    loadGame();
   }, delay);
 }
 
-async function loadRemoteGame() {
-  if (isLoadingRemote || gameLoaded || isQuitting || !gameWindow || gameWindow.isDestroyed()) return;
+async function loadGame() {
+  if (isLoadingGame || gameLoaded || isQuitting || !gameWindow || gameWindow.isDestroyed()) return;
   if (retryTimer) {
     clearTimeout(retryTimer);
     retryTimer = null;
   }
 
   retryAttempt++;
-  isLoadingRemote = true;
-  sendLoadingStatus(
-    "connecting",
-    `Connessione ad ARCADE DUEL... (tentativo ${retryAttempt})\n\nIl server gratuito può impiegare 50 secondi o più per riavviarsi. La finestra resterà in attesa.`
-  );
+  isLoadingGame = true;
+  sendLoadingStatus("connecting", `Avvio del client locale ARCADE DUEL... (tentativo ${retryAttempt})`);
 
   let timedOut = false;
   const watchdog = setTimeout(() => {
@@ -54,7 +86,7 @@ async function loadRemoteGame() {
   }, LOAD_TIMEOUT_MS);
 
   try {
-    await gameWindow.loadURL(GAME_URL);
+    await gameWindow.loadURL(`${GAME_SCHEME}://${GAME_HOST}/index.html`);
     if (isQuitting || !gameWindow || gameWindow.isDestroyed()) return;
     gameLoaded = true;
     retryAttempt = 0;
@@ -64,12 +96,12 @@ async function loadRemoteGame() {
   } catch (error) {
     if (isQuitting || gameLoaded) return;
     const message = timedOut
-      ? "Il server non ha risposto entro due minuti."
-      : `Connessione temporaneamente non disponibile (${String(error.message || error).slice(0, 140)}).`;
+      ? "Il client locale non si è avviato entro due minuti."
+      : `Impossibile avviare il client locale (${String(error.message || error).slice(0, 140)}).`;
     scheduleRetry(message);
   } finally {
     clearTimeout(watchdog);
-    isLoadingRemote = false;
+    isLoadingGame = false;
   }
 }
 
@@ -85,6 +117,7 @@ function createWindows() {
     autoHideMenuBar: true,
     fullscreenable: true,
     webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
@@ -96,7 +129,8 @@ function createWindows() {
   gameWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
   gameWindow.webContents.on("will-navigate", (event, url) => {
     try {
-      if (new URL(url).origin !== new URL(GAME_URL).origin) event.preventDefault();
+      const target = new URL(url);
+      if (target.protocol !== `${GAME_SCHEME}:` || target.hostname !== GAME_HOST) event.preventDefault();
     } catch {
       event.preventDefault();
     }
@@ -136,7 +170,7 @@ function createWindows() {
     .then(() => {
       if (!loadingWindow || loadingWindow.isDestroyed()) return;
       loadingWindow.show();
-      loadRemoteGame();
+      loadGame();
     })
     .catch(error => {
       console.error("Could not open the connection screen:", error);
@@ -146,9 +180,9 @@ function createWindows() {
 }
 
 ipcMain.on("arcade:retry", event => {
-  if (!loadingWindow || event.sender !== loadingWindow.webContents || gameLoaded || isLoadingRemote) return;
+  if (!loadingWindow || event.sender !== loadingWindow.webContents || gameLoaded || isLoadingGame) return;
   retryAttempt = 0;
-  loadRemoteGame();
+  loadGame();
 });
 
 app.on("before-quit", () => {
@@ -179,7 +213,10 @@ if (!hasSingleInstance) {
     window.focus();
   });
 
-  app.whenReady().then(createWindows).catch(error => {
+  app.whenReady().then(() => {
+    registerGameProtocol();
+    createWindows();
+  }).catch(error => {
     console.error("Could not start ARCADE DUEL:", error);
     dialog.showErrorBox("ARCADE DUEL", "Impossibile avviare l'applicazione.");
     app.quit();

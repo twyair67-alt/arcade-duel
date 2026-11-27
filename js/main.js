@@ -276,6 +276,7 @@ function renderRoster() {
 
 function socketUrl() {
   if (window.ARCADE_SERVER_URL) return window.ARCADE_SERVER_URL;
+  if (window.arcadeDesktop?.serverUrl) return window.arcadeDesktop.serverUrl;
   const secure = location.protocol === "https:";
   const scheme = secure ? "wss:" : "ws:";
   const localHost = ["localhost", "127.0.0.1", "::1"].includes(location.hostname);
@@ -498,7 +499,7 @@ function httpBase() {
   const fallback = location.protocol === "file:" || !location.host || localHost
     ? `http://${location.hostname || "localhost"}:8080`
     : location.origin;
-  return (window.ARCADE_SERVER_HTTP || fallback).replace(/\/$/, "");
+  return (window.ARCADE_SERVER_HTTP || window.arcadeDesktop?.serverHttpUrl || fallback).replace(/\/$/, "");
 }
 
 renderNickname();

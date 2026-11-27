@@ -1,6 +1,6 @@
 # ARCADE DUEL Desktop
 
-Client Electron per Windows: carica `https://arcade-duel.onrender.com/` e non avvia un server locale. Se Render è in sospensione, mostra una schermata d'attesa e riprova automaticamente con intervalli crescenti; **RIPROVA ORA** avvia un nuovo tentativo.
+Client Electron per Windows: include una copia sincronizzata dei file web dalla root del repository; matchmaking e classifiche online continuano a usare Render. Il client locale si avvia anche se il sito è irraggiungibile; le modalità offline restano disponibili.
 
 ## Avvio in test
 
@@ -11,7 +11,7 @@ npm.cmd ci
 npm.cmd start
 ```
 
-La finestra di gioco è dimensionabile, supporta fullscreen e usa la pagina remota con WebAudio, mouse e tastiera.
+La finestra di gioco è dimensionabile, supporta fullscreen e usa WebAudio, mouse e tastiera. Il comando sincronizza prima HTML, CSS, JavaScript e asset dalla root.
 
 ## Pacchetto Windows
 
@@ -22,4 +22,4 @@ npm.cmd ci
 npm.cmd run dist:win
 ```
 
-L'installer NSIS x64 viene creato in `desktop/dist/`.
+L'installer NSIS x64 viene creato in `desktop/dist/release/`. I file web sono inclusi nelle risorse dell'app e aggiornati automaticamente prima del packaging.

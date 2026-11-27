@@ -5,11 +5,11 @@
   "description": "Android Capacitor client for ARCADE DUEL",
   "scripts": {
     "android:add": "cap add android",
-    "android:sync": "cap sync android",
+    "android:sync": "node ..\\scripts\\sync-web.js android && cap sync android",
     "android:open": "cap open android",
     "android:run": "cap run android",
-    "android:apk:debug": "cd android && gradlew.bat assembleDebug",
-    "android:bundle:release": "cd android && gradlew.bat bundleRelease"
+    "android:apk:debug": "npm run android:sync && cd android && gradlew.bat assembleDebug",
+    "android:bundle:release": "npm run android:sync && cd android && gradlew.bat bundleRelease"
   },
   "dependencies": {
     "@capacitor/android": "8.6.2",

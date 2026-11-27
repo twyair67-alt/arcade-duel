@@ -13,7 +13,9 @@ server/game-data.json.*.tmp
 server/data/
 desktop/node_modules/
 desktop/dist/
+desktop/game/
 android-app/node_modules/
+android-app/www/
 android-app/android/.gradle/
 android-app/android/build/
 android-app/android/app/build/

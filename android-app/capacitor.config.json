@@ -5,11 +5,6 @@
   "backgroundColor": "#000000",
   "zoomEnabled": false,
   "initialFocus": true,
-  "server": {
-    "url": "https://arcade-duel.onrender.com/",
-    "cleartext": false,
-    "errorPath": "offline.html"
-  },
   "android": {
     "backgroundColor": "#000000",
     "zoomEnabled": false,

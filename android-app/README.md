@@ -1,8 +1,6 @@
 # ARCADE DUEL per Android
 
-Client Capacitor che apre direttamente `https://arcade-duel.onrender.com/`: non installa né avvia un server sul telefono. `server.url` è impostato in `capacitor.config.json`; una schermata nativa comunica l'attesa mentre il server si connette, e `server.errorPath` mostra retry progressivi se il WebView riceve un errore temporaneo. Il layout del gioco supporta già portrait e landscape. L'app lascia l'orientamento automatico, usa immersive full screen e il primo tocco sblocca l'audio Web Audio del gioco.
-
-Nota: la documentazione Capacitor descrive `server.url` come opzione pensata principalmente per live reload e non raccomandata per le release. Qui viene usata perché l'app deve caricare il sito Render remoto; ciò rende l'avvio e il gioco dipendenti dalla disponibilità del servizio e dalle policy dello store. Per una release pubblica, verifica i requisiti Google Play per le app WebView e considera di includere il client web nel pacchetto, mantenendo online matchmaking e classifica.
+Client Capacitor che include HTML, CSS, JavaScript e asset sincronizzati dalla root del repository; matchmaking e classifiche online continuano a collegarsi a Render. L'avvio e le modalità offline non dipendono dal caricamento del sito remoto. Il layout supporta portrait e landscape, l'app lascia l'orientamento automatico, usa immersive full screen e il primo tocco sblocca l'audio Web Audio.
 
 ## Requisiti
 
@@ -20,7 +18,7 @@ npm.cmd ci
 npm.cmd run android:sync
 ```
 
-La piattaforma Android è già inclusa nel progetto. Se in una copia nuova la cartella `android/` non è presente, esegui una sola volta `npm.cmd run android:add` prima di `npm.cmd run android:sync`. Ripeti la sincronizzazione dopo modifiche alla configurazione o ai sorgenti web/Capacitor.
+`android:sync` copia sempre i sorgenti web correnti in `www/` e poi esegue Capacitor Sync. La piattaforma Android è già inclusa nel progetto. Se in una copia nuova la cartella `android/` non è presente, esegui una sola volta `npm.cmd run android:add` prima di `npm.cmd run android:sync`.
 
 ## Avvio in Android Studio o su dispositivo
 
@@ -40,7 +38,7 @@ Per creare un APK debug installabile:
 npm.cmd run android:apk:debug
 ```
 
-Output: `android\app\build\outputs\apk\debug\app-debug.apk`.
+Il comando sincronizza di nuovo i sorgenti web prima di Gradle. Output: `android\app\build\outputs\apk\debug\app-debug.apk`.
 
 ## Release APK/AAB
 
@@ -56,6 +54,6 @@ Output AAB: `android\app\build\outputs\bundle\release\app-release.aab`. Per pubb
 
 ## Permessi e test rete
 
-Capacitor include `android.permission.INTERNET` nel manifest generato; non serve un permesso runtime. L'app richiede una connessione internet. HTTPS e `wss://` sono usati senza abilitare traffico HTTP in chiaro; il WebSocket e la classifica continuano a usare l'origine Render della pagina. Su emulatore verifica che abbia accesso a Internet; su telefono disattiva temporaneamente il Wi-Fi per provare la schermata offline e riattivalo per verificare il retry. Il primo risveglio di Render può richiedere almeno 50 secondi.
+Capacitor include `android.permission.INTERNET` nel manifest generato; non serve un permesso runtime. Le modalità offline funzionano senza rete; matchmaking e classifiche richiedono internet e usano HTTPS/`wss://` verso Render. Su emulatore verifica che abbia accesso a Internet.
 
 Per ispezionare `console` ed errori WebView durante lo sviluppo, abilita temporaneamente `webContentsDebuggingEnabled` nella configurazione Android, sincronizza e usa `chrome://inspect` da Chrome desktop. L'opzione va mantenuta disattivata nelle release.

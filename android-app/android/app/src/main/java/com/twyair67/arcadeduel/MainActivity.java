@@ -18,8 +18,6 @@ import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.WebViewListener;
 
 public class MainActivity extends BridgeActivity {
-    private static final String GAME_URL = "https://arcade-duel.onrender.com/";
-
     private FrameLayout loadingOverlay;
     private TextView loadingMessage;
 
@@ -74,7 +72,7 @@ public class MainActivity extends BridgeActivity {
             content.addView(progress, progressParams);
 
             loadingMessage = new TextView(this);
-            loadingMessage.setText("Connessione al server di gioco...\\n\\nIl risveglio di Render puo richiedere 50 secondi o piu.");
+            loadingMessage.setText("Avvio del client locale...");
             loadingMessage.setTextColor(Color.LTGRAY);
             loadingMessage.setTextSize(15);
             loadingMessage.setGravity(Gravity.CENTER);
@@ -88,8 +86,8 @@ public class MainActivity extends BridgeActivity {
             Button retry = new Button(this);
             retry.setText("RIPROVA ORA");
             retry.setOnClickListener(view -> {
-                loadingMessage.setText("Nuovo tentativo di connessione a Render...");
-                bridge.getWebView().loadUrl(GAME_URL);
+                loadingMessage.setText("Nuovo tentativo di avvio...");
+                bridge.getWebView().reload();
             });
             LinearLayout.LayoutParams retryParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT

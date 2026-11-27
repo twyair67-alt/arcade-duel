@@ -9,8 +9,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "start": "electron .",
-    "dist:win": "electron-builder --win nsis --x64"
+    "start": "node ..\\scripts\\sync-web.js desktop && electron .",
+    "dist:win": "node ..\\scripts\\sync-web.js desktop && electron-builder --win nsis --x64"
   },
   "devDependencies": {
     "electron": "^45.5.0",
@@ -21,7 +21,7 @@
     "productName": "ARCADE DUEL",
     "asar": true,
     "directories": {
-      "output": "dist"
+      "output": "dist/release"
     },
     "files": [
       "main.js",
@@ -32,6 +32,12 @@
       "LICENSE",
       "README.md",
       "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "game",
+        "to": "game"
+      }
     ],
     "win": {
       "target": [

@@ -14,7 +14,7 @@ Per l'hosting Node.js, configura il servizio per eseguire `npm start` dalla cart
 
 ## App Android
 
-Il client Capacitor in `android-app/` carica direttamente il gioco online su Render e non avvia un server locale sul dispositivo. I requisiti Android, la sincronizzazione, l'avvio su emulatore/telefono e la creazione di APK/AAB sono descritti in [android-app/README.md](./android-app/README.md).
+Il client Capacitor in `android-app/` include i file web dalla root del progetto; matchmaking e classifiche online continuano a usare Render. `npm.cmd run android:sync` sincronizza automaticamente i sorgenti prima di `cap sync`, e la build APK esegue la sincronizzazione a sua volta. I requisiti Android e i comandi sono descritti in [android-app/README.md](./android-app/README.md).
 
 ## Pubblicazione su Render o Railway
 

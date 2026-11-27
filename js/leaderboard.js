@@ -171,7 +171,7 @@ export async function fetchGlobalLeaderboard() {
   const fallback = location.protocol === "file:" || !location.host || localHost
     ? `http://${location.hostname || "localhost"}:8080`
     : location.origin;
-  const configured = window.ARCADE_SERVER_HTTP || fallback;
+  const configured = window.ARCADE_SERVER_HTTP || window.arcadeDesktop?.serverHttpUrl || fallback;
   const response = await fetch(`${configured.replace(/\/$/, "")}/api/leaderboard`);
   if (!response.ok) throw new Error(`Server classifica: HTTP ${response.status}`);
   const body = await response.json();
