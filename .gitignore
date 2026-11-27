@@ -1,4 +1,10 @@
 node_modules/
+.gradle/
+build/
+dist/
+release/
+*.exe
+*.apk
 server/node_modules/
 server/leaderboard.json
 server/cpu-leaderboard.json

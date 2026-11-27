@@ -416,6 +416,18 @@ function connectAndRequest(request, initialScreen = gameScreen) {
 function playOnline() { connectAndRequest({ type: "queue", mode: "ranked" }); }
 function playFriendly() { connectAndRequest({ type: "queue", mode: "friendly" }); }
 
+function joinPrivateRoom(kind) {
+  const input = $(kind === "friendly" ? "friendly-code" : "tournament-code");
+  const code = input.value.trim().toUpperCase();
+  if (code) connectAndRequest({ type: "join_lobby", kind, code }, $("tournament-lobby-screen"));
+}
+
+function handleRoomCodeKeydown(event, kind) {
+  if (event.key !== "Enter") return;
+  event.preventDefault();
+  joinPrivateRoom(kind);
+}
+
 function returnHome() {
   if (network && network.readyState === WebSocket.OPEN) network.send(JSON.stringify({ type: "leave" }));
   if (network) { network.close(); network = null; }
@@ -500,15 +512,11 @@ $("play-training").addEventListener("click", playTraining);
 $("play-online").addEventListener("click", playOnline);
 $("play-friendly").addEventListener("click", playFriendly);
 $("create-friendly").addEventListener("click", () => connectAndRequest({ type: "create_lobby", kind: "friendly" }, $("tournament-lobby-screen")));
-$("join-friendly").addEventListener("click", () => {
-  const code = $("friendly-code").value.trim().toUpperCase();
-  if (code) connectAndRequest({ type: "join_lobby", kind: "friendly", code }, $("tournament-lobby-screen"));
-});
+$("join-friendly").addEventListener("click", () => joinPrivateRoom("friendly"));
+$("friendly-code").addEventListener("keydown", event => handleRoomCodeKeydown(event, "friendly"));
 $("create-tournament").addEventListener("click", () => connectAndRequest({ type: "create_lobby", kind: "tournament" }, $("tournament-lobby-screen")));
-$("join-tournament").addEventListener("click", () => {
-  const code = $("tournament-code").value.trim().toUpperCase();
-  if (code) connectAndRequest({ type: "join_lobby", kind: "tournament", code }, $("tournament-lobby-screen"));
-});
+$("join-tournament").addEventListener("click", () => joinPrivateRoom("tournament"));
+$("tournament-code").addEventListener("keydown", event => handleRoomCodeKeydown(event, "tournament"));
 $("tournament-start").addEventListener("click", () => {
   if (activeLobby?.canStart && network?.readyState === WebSocket.OPEN) {
     network.send(JSON.stringify({ type: "start_tournament", code: activeLobby.code }));

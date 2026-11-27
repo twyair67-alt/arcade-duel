@@ -36,7 +36,7 @@ Il client Capacitor in `android-app/` carica direttamente il gioco online su Ren
 
 Le armi vettoriali sono il fallback automatico. Gli sprite facoltativi si collocano in `assets/weapons/weapon-left.png` e `assets/weapons/weapon-right.png`; dettagli e configurazione varianti sono in `assets/README.txt`.
 
-Allenamento non assegna XP né registra risultati. Le partite offline CPU assegnano XP CPU separati dal Rank ufficiale e sincronizzano la coda locale dopo l'autenticazione del profilo. Solo il matchmaking classificato aggiorna Rank e statistiche ufficiali; amichevoli, codici invito e tornei privati non alterano il Rank. I tornei pubblici sono mostrati come “COMING SOON”.
+Allenamento non assegna XP né registra risultati. Le partite offline CPU assegnano XP CPU separati dal Rank ufficiale e sincronizzano la coda locale dopo l'autenticazione del profilo. Solo il matchmaking classificato aggiorna Rank e statistiche ufficiali; amichevoli, codici invito e tornei privati non alterano il Rank. Una stanza amichevole con codice avvia automaticamente la partita quando entra il secondo giocatore; il requisito minimo di quattro partecipanti si applica solo ai tornei privati, che l'host avvia dalla lobby. I tornei pubblici sono mostrati come “COMING SOON”.
 
 ## Licenza
 
